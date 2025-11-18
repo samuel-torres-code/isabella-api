@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	dockerDataFile = "docker_data.json"
+	dockerDataFile = "/app/cache/docker_data.json"
 )
 
 // GetContainers handles the request to fetch metrics from the Docker daemon.

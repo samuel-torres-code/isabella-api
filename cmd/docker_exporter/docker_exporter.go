@@ -15,8 +15,8 @@ import (
 )
 
 const (
-	dockerOutputFile = "docker_data.json" // Specific file for Docker data
-	interval         = 5 * time.Second    // How often to collect data
+	dockerOutputFile = "/app/cache/docker_data.json" // Specific file for Docker data in shared volume
+	interval         = 5 * time.Second               // How often to collect data
 )
 
 func getDockerClient() (*client.Client, error) {
@@ -34,7 +34,7 @@ func collectDockerInfo(cli *client.Client) ([]types.Container, error) { // Use t
 	}
 
 	containerList := make([]types.Container, 0, len(containers.Items)) // Use types.Container
-	for _, c := range containers.Items { // Use types.Container
+	for _, c := range containers.Items {                               // Use types.Container
 		containerList = append(containerList, types.Container{ // Use types.Container
 			ID:      c.ID,
 			Name:    strings.Join(c.Names, ", "),
@@ -46,7 +46,7 @@ func collectDockerInfo(cli *client.Client) ([]types.Container, error) { // Use t
 	return containerList, nil
 }
 
-func writeDockerDataToFile(data types.DockerInfo) error { 
+func writeDockerDataToFile(data types.DockerInfo) error {
 	jsonData, err := json.MarshalIndent(data, "", "  ")
 	if err != nil {
 		return fmt.Errorf("failed to marshal JSON: %w", err)
