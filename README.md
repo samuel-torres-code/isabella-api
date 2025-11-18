@@ -1,10 +1,13 @@
 # Go Isabella API
 
-This is a Go-based API for observing Docker containers, inspired by the Python-based `isabella-api`.
+This is a lightweight API for my server.
+
+# Functionality
 
 ## Description
 
-The Go Isabella API provides endpoints to list Docker containers and inspect individual containers running on the host machine. It uses the official Docker Engine SDK for Go to interact with the Docker daemon.
+The Go Isabella API provides endpoints for...
+- Live docker container information.
 
 ## Getting Started
 
@@ -13,24 +16,88 @@ The Go Isabella API provides endpoints to list Docker containers and inspect ind
 - Go 1.18 or later
 - Docker installed and running
 
-### Installation and Running
+### Building and Running
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/your-username/go-isabella-api.git
-   cd go-isabella-api
-   ```
+This project uses a `Makefile` to streamline building the Go executables and Docker images, and managing the Docker containers.
 
-2. **Tidy the dependencies:**
-   ```bash
-   go mod tidy
-   ```
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/your-username/go-isabella-api.git
+    cd go-isabella-api
+    ```
 
-3. **Run the application:**
-   ```bash
-   go run main.go
-   ```
-   The API will be available at `http://localhost:8080`.
+2.  **Tidy the dependencies:**
+    ```bash
+    go mod tidy
+    ```
+
+3.  **Build Go executables and Docker images:**
+    ```bash
+    make all
+    ```
+    This command will:
+    *   Build the `go-isabella-api` executable.
+    *   Build the `docker-exporter` executable.
+    *   Build the `go-isabella-api-api` Docker image.
+    *   Build the `go-isabella-api-exporter` Docker image.
+
+4.  **Docker Setup (Network and Volume):**
+    Before running the Docker containers, ensure the shared network and volume are created:
+    ```bash
+    make docker-network
+    make docker-volume
+    ```
+    These commands create the `isabella-network` and `isabella-cache` volume, respectively.
+
+5.  **Run the Docker Exporter container:**
+    ```bash
+    make docker-run-exporter
+    ```
+    This will start the `isabella-exporter` container. This exporter needs access to the Docker daemon, so it mounts `/var/run/docker.sock`. Ensure that the user running this command has permissions to access `/var/run/docker.sock`. It also uses the `isabella-network` and `isabella-cache` volume.
+
+6.  **Run the API application container:**
+    ```bash
+    make docker-run-api
+    ```
+    This will start the `isabella-api` container, exposing it on port `8080`. The API will be available at `http://localhost:8080`. It also uses the `isabella-network` and `isabella-cache` volume.
+
+7.  **Run both Exporter and API containers:**
+    ```bash
+    make docker-run
+    ```
+    This command will start both the `isabella-exporter` and `isabella-api` containers.
+
+8.  **Stop all running containers:**
+    ```bash
+    make docker-stop
+    ```
+
+9.  **View container logs:**
+    ```bash
+    make docker-logs-api
+    make docker-logs-exporter
+    ```
+
+10. **Clean up:**
+    ```bash
+    make clean
+    ```
+    This command stops and removes containers, images, executables, network, and volume.
+
+11. **Clean cache volume only:**
+    ```bash
+    make clean-cache
+    ```
+
+12. **Restart all containers:**
+    ```bash
+    make restart
+    ```
+
+13. **Check status of Docker components:**
+    ```bash
+    make status
+    ```
 
 ## API Endpoints
 
@@ -41,45 +108,18 @@ The Go Isabella API provides endpoints to list Docker containers and inspect ind
     ```json
     {
       "status": "healthy",
-      "message": "Docker Container API"
+      "message": "Isabella API"
     }
     ```
 
-### Container Endpoints
+### Containers
 
-- **GET /containers**: Returns a list of all Docker containers.
-  - **Response:**
-    ```json
-    {
-      "containers": [
-        {
-          "id": "container_id",
-          "name": "container_name",
-          "image": "image_name",
-          "state": "running",
-          "status": "Up 2 hours",
-          "created": 1678886400
-        }
-      ]
-    }
-    ```
-
-- **GET /containers/{container_id}**: Returns details for a specific container.
-  - **Response:**
-    ```json
-    {
-      "id": "container_id",
-      "name": "container_name",
-      "image": "image_name",
-      "state": "running",
-      "created": 1678886400
-    }
-    ```
-
+- **GET /containers**: Returns a list of all Docker container information from `docker_data.json`.
 
 # Future
-- [ ] Dockerize
+- [x] Dockerize
 - [ ] OpenAPI spec
 - [ ] Gin for better routing
 - [ ] Security Audit
+- [ ] More data on network traffic, hard drive array health/size, system internals.
 
