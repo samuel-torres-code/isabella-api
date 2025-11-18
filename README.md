@@ -1,10 +1,13 @@
 # Go Isabella API
 
-This is a Go-based API for observing Docker containers, inspired by the Python-based `isabella-api`.
+This is a lightweight API for my server.
+
+# Functionality
 
 ## Description
 
-The Go Isabella API provides endpoints to list Docker containers and inspect individual containers running on the host machine. It uses the official Docker Engine SDK for Go to interact with the Docker daemon.
+The Go Isabella API provides endpoints for...
+- Live docker container information
 
 ## Getting Started
 
@@ -82,4 +85,5 @@ The Go Isabella API provides endpoints to list Docker containers and inspect ind
 - [ ] OpenAPI spec
 - [ ] Gin for better routing
 - [ ] Security Audit
+- [ ] More data on network traffic, hard drive array health/size, system internals.
 
