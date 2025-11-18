@@ -62,13 +62,13 @@ This project uses a `Makefile` to streamline building the Go executables and Doc
     ```json
     {
       "status": "healthy",
-      "message": "Docker Exporter API"
+      "message": "Isabella API"
     }
     ```
 
-### Metrics Endpoint
+### Containers
 
-- **GET /metrics**: Returns a list of all Docker container information from `docker_data.json`.
+- **GET /containers**: Returns a list of all Docker container information from `docker_data.json`.
 
 # Future
 - [x] Dockerize
