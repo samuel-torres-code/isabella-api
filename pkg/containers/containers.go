@@ -1,66 +1,27 @@
 package containers
 
 import (
-	"context"
-	"encoding/json"
 	"net/http"
-	"strings"
-
-	"github.com/moby/moby/client"
+	"os"
 )
 
-// Container represents a Docker container.
-type Container struct {
-	ID      string `json:"id"`
-	Name    string `json:"name"`
-	Image   string `json:"image"`
-	Status  string `json:"status"`
-	Created int64  `json:"created"`
-}
+const (
+	dockerDataFile = "docker_data.json"
+)
 
-// ContainerList represents a list of Docker containers.
-type ContainerList struct {
-	Containers []Container `json:"containers"`
-}
-
-func getDockerClient() (*client.Client, error) {
-	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation(), client.WithVersion("1.41"))
-	if err != nil {
-		return nil, err
-	}
-	return cli, nil
-}
-
-// GetContainers handles the request to list all Docker containers.
+// GetContainers handles the request to fetch metrics from the Docker daemon.
 func GetContainers(w http.ResponseWriter, r *http.Request) {
-	cli, err := getDockerClient()
+	// Read the content of the docker_data.json file
+	data, err := os.ReadFile(dockerDataFile)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		if os.IsNotExist(err) {
+			http.Error(w, "Docker data file not found. Please ensure docker_exporter is running.", http.StatusNotFound)
+		} else {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 		return
 	}
 
-	containers, err := cli.ContainerList(context.Background(), client.ContainerListOptions{All: true})
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	containerList := make([]Container, 0, len(containers.Items))
-	for _, c := range containers.Items {
-		containerList = append(containerList, Container{
-			ID:      c.ID,
-			Name:    strings.Join(c.Names, ", "),
-			Image:   c.Image,
-			Status:  c.Status,
-			Created: c.Created,
-		})
-	}
-
-	response := ContainerList{Containers: containerList}
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
-}
-
-func GetContainer(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("GetContainer"))
+	w.Write(data)
 }

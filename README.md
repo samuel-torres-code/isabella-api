@@ -7,7 +7,7 @@ This is a lightweight API for my server.
 ## Description
 
 The Go Isabella API provides endpoints for...
-- Live docker container information
+- Live docker container information.
 
 ## Getting Started
 
@@ -29,11 +29,25 @@ The Go Isabella API provides endpoints for...
    go mod tidy
    ```
 
-3. **Run the application:**
+3. **Run the API application:**
    ```bash
    go run main.go
    ```
    The API will be available at `http://localhost:8080`.
+
+## Docker Exporter
+
+This project uses a separate background process, `docker_exporter`, to collect Docker container information and save it to a local JSON file (`docker_data.json`). The main API then reads this file, completely decoupling the API from direct Docker daemon interaction and enhancing security.
+
+### Running the Docker Exporter
+
+To run the `docker_exporter` in the background, execute the following command in a separate terminal:
+
+```bash
+go run cmd/docker_exporter/docker_exporter.go &
+```
+
+This exporter needs access to the Docker daemon. Ensure that the user running this command has permissions to access `/var/run/docker.sock`.
 
 ## API Endpoints
 
@@ -44,41 +58,13 @@ The Go Isabella API provides endpoints for...
     ```json
     {
       "status": "healthy",
-      "message": "Docker Container API"
+      "message": "Docker Exporter API"
     }
     ```
 
-### Container Endpoints
+### Metrics Endpoint
 
-- **GET /containers**: Returns a list of all Docker containers.
-  - **Response:**
-    ```json
-    {
-      "containers": [
-        {
-          "id": "container_id",
-          "name": "container_name",
-          "image": "image_name",
-          "state": "running",
-          "status": "Up 2 hours",
-          "created": 1678886400
-        }
-      ]
-    }
-    ```
-
-- **GET /containers/{container_id}**: Returns details for a specific container.
-  - **Response:**
-    ```json
-    {
-      "id": "container_id",
-      "name": "container_name",
-      "image": "image_name",
-      "state": "running",
-      "created": 1678886400
-    }
-    ```
-
+- **GET /metrics**: Returns a list of all Docker container information from `docker_data.json`.
 
 # Future
 - [ ] Dockerize
