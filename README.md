@@ -18,7 +18,7 @@ The Go Isabella API provides endpoints for...
 
 ### Building and Running
 
-This project uses a `Makefile` to streamline building the Go executables and Docker images.
+This project uses a `Makefile` to streamline building the Go executables and Docker images, and managing the Docker containers.
 
 1.  **Clone the repository:**
     ```bash
@@ -41,17 +41,63 @@ This project uses a `Makefile` to streamline building the Go executables and Doc
     *   Build the `go-isabella-api-api` Docker image.
     *   Build the `go-isabella-api-exporter` Docker image.
 
-4.  **Run the Docker Exporter container:**
+4.  **Docker Setup (Network and Volume):**
+    Before running the Docker containers, ensure the shared network and volume are created:
+    ```bash
+    make docker-network
+    make docker-volume
+    ```
+    These commands create the `isabella-network` and `isabella-cache` volume, respectively.
+
+5.  **Run the Docker Exporter container:**
     ```bash
     make docker-run-exporter
     ```
-    This will start the `docker-exporter` in a container. This exporter needs access to the Docker daemon, so it mounts `/var/run/docker.sock`. Ensure that the user running this command has permissions to access `/var/run/docker.sock`.
+    This will start the `isabella-exporter` container. This exporter needs access to the Docker daemon, so it mounts `/var/run/docker.sock`. Ensure that the user running this command has permissions to access `/var/run/docker.sock`. It also uses the `isabella-network` and `isabella-cache` volume.
 
-5.  **Run the API application container:**
+6.  **Run the API application container:**
     ```bash
     make docker-run-api
     ```
-    This will start the main API application in a container, exposing it on port `8080`. The API will be available at `http://localhost:8080`.
+    This will start the `isabella-api` container, exposing it on port `8080`. The API will be available at `http://localhost:8080`. It also uses the `isabella-network` and `isabella-cache` volume.
+
+7.  **Run both Exporter and API containers:**
+    ```bash
+    make docker-run
+    ```
+    This command will start both the `isabella-exporter` and `isabella-api` containers.
+
+8.  **Stop all running containers:**
+    ```bash
+    make docker-stop
+    ```
+
+9.  **View container logs:**
+    ```bash
+    make docker-logs-api
+    make docker-logs-exporter
+    ```
+
+10. **Clean up:**
+    ```bash
+    make clean
+    ```
+    This command stops and removes containers, images, executables, network, and volume.
+
+11. **Clean cache volume only:**
+    ```bash
+    make clean-cache
+    ```
+
+12. **Restart all containers:**
+    ```bash
+    make restart
+    ```
+
+13. **Check status of Docker components:**
+    ```bash
+    make status
+    ```
 
 ## API Endpoints
 

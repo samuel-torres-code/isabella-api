@@ -12,5 +12,5 @@ type Container struct {
 // DockerInfo represents the collected Docker information.
 type DockerInfo struct {
 	Containers []Container `json:"containers"`
-	// Add fields for other types of data here
+	
 }
