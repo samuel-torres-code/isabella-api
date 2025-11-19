@@ -99,6 +99,33 @@ This project uses a `Makefile` to streamline building the Go executables and Doc
     make status
     ```
 
+### Publishing to Docker Hub
+
+To publish your Docker images to Docker Hub, follow these steps:
+
+1.  **Log in to Docker Hub:**
+    ```bash
+    docker login
+    ```
+    Enter your Docker Hub username and password when prompted.
+
+2.  **Tag your Docker images:**
+    ```bash
+    make docker-tag-api
+    make docker-tag-exporter
+    ```
+    These commands will tag your locally built images with your Docker Hub username (e.g., `racecar246/go-isabella-api-api`).
+
+3.  **Push your Docker images to Docker Hub:**
+    ```bash
+    make docker-push-api
+    make docker-push-exporter
+    ```
+    Alternatively, push both images with:
+    ```bash
+    make docker-push-all
+    ```
+
 ## API Endpoints
 
 ### Health Check
