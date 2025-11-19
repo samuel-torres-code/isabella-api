@@ -52,7 +52,7 @@ make docker-push-all
 2. Find your `isabella-api` stack
 3. Click **Compose Up** to start the services
 
-The API will be available at `http://your-unraid-ip:3000`
+The API will be available at `http://your-unraid-ip:8191`
 
 ## Option 2: Building on Unraid (Advanced)
 
@@ -119,18 +119,12 @@ When you need to update:
 ## Troubleshooting
 
 ### Port Already in Use
-The default port is set to 3000. If you need to change it, edit the stack and modify:
+The default port is set to 8191 to avoid conflicts. If you need to change it, edit the stack and modify:
 ```yaml
 ports:
-  - "3000:8080"  # Change first number (3000) to an available port
+  - "8191:8080"  # Change first number (8191) to an available port
 ```
 Note: The second number (8080) is the container's internal port and should remain 8080.
-
-To check what ports are in use on your Unraid server, you can SSH in and run:
-```bash
-netstat -tuln | grep LISTEN
-```
-Or check the Docker tab in Unraid's web interface to see all port mappings.
 
 ### Docker Socket Permission Issues
 The exporter needs access to Docker socket. This should work by default, but if you have issues:
@@ -151,7 +145,7 @@ If you prefer not to use Docker Compose Manager, you can add containers manually
 2. Add the API container:
    - Repository: `racecar246/isabella-api:latest`
    - Name: `isabella-api`
-   - Port: `3000:8080`
+   - Port: `8191:8080`
    - Add volume: `isabella-cache:/app/cache`
 3. Add the Exporter container:
    - Repository: `racecar246/isabella-exporter:latest`

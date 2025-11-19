@@ -5,7 +5,7 @@ services:
     image: racecar246/isabella-api:latest
     container_name: isabella-api
     ports:
-      - "3000:8080"
+      - "8192:8080"
     volumes:
       - isabella-cache:/app/cache
     networks:
