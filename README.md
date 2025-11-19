@@ -142,7 +142,7 @@ To publish your Docker images to Docker Hub, follow these steps:
     make docker-tag-api
     make docker-tag-exporter
     ```
-    These commands will tag your locally built images with your Docker Hub username (e.g., `racecar246/go-isabella-api-api`).
+    These commands will tag your locally built images with your Docker Hub username (e.g., `racecar246/isabella-api`).
 
 3.  **Push your Docker images to Docker Hub:**
     ```bash
@@ -153,6 +153,16 @@ To publish your Docker images to Docker Hub, follow these steps:
     ```bash
     make docker-push-all
     ```
+
+### Deploying to Unraid
+
+For detailed instructions on deploying this application to your Unraid server, see [UNRAID_DEPLOYMENT.md](UNRAID_DEPLOYMENT.md).
+
+Quick summary:
+1. Build and push images: `make docker-push-all`
+2. Install Docker Compose Manager plugin on Unraid
+3. Create a new stack using `docker-compose.unraid.yml`
+4. Deploy with **Compose Up**
 
 ## API Endpoints
 
