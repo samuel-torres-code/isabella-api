@@ -41,7 +41,35 @@ This project uses a `Makefile` to streamline building the Go executables and Doc
     *   Build the `go-isabella-api-api` Docker image.
     *   Build the `go-isabella-api-exporter` Docker image.
 
-4.  **Docker Setup (Network and Volume):**
+4.  **Run with Docker Compose (Recommended):**
+    The simplest way to run the application is using Docker Compose:
+    ```bash
+    make compose-up-build
+    ```
+    This will build the images and start both services. The API will be available at `http://localhost:8080`.
+    
+    Other useful Docker Compose commands:
+    - `make compose-up` - Start services (assumes images are already built)
+    - `make compose-down` - Stop and remove services
+    - `make compose-logs` - View logs from all services
+    - `make compose-logs-api` - View logs from API service only
+    - `make compose-logs-exporter` - View logs from exporter service only
+    - `make compose-restart` - Restart all services
+    - `make compose-ps` - Show status of services
+    - `make compose-clean` - Stop services and remove volumes
+    
+    Or use `docker-compose` directly:
+    ```bash
+    docker-compose up -d          # Start services
+    docker-compose down           # Stop services
+    docker-compose logs -f        # View logs
+    docker-compose ps             # Show status
+    ```
+
+5.  **Alternative: Manual Docker Setup (Legacy):**
+    If you prefer the manual Docker approach:
+    
+    **Docker Setup (Network and Volume):**
     Before running the Docker containers, ensure the shared network and volume are created:
     ```bash
     make docker-network
@@ -49,52 +77,52 @@ This project uses a `Makefile` to streamline building the Go executables and Doc
     ```
     These commands create the `isabella-network` and `isabella-cache` volume, respectively.
 
-5.  **Run the Docker Exporter container:**
+    **Run the Docker Exporter container:**
     ```bash
     make docker-run-exporter
     ```
     This will start the `isabella-exporter` container. This exporter needs access to the Docker daemon, so it mounts `/var/run/docker.sock`. Ensure that the user running this command has permissions to access `/var/run/docker.sock`. It also uses the `isabella-network` and `isabella-cache` volume.
 
-6.  **Run the API application container:**
+    **Run the API application container:**
     ```bash
     make docker-run-api
     ```
     This will start the `isabella-api` container, exposing it on port `8080`. The API will be available at `http://localhost:8080`. It also uses the `isabella-network` and `isabella-cache` volume.
 
-7.  **Run both Exporter and API containers:**
+    **Run both Exporter and API containers:**
     ```bash
     make docker-run
     ```
     This command will start both the `isabella-exporter` and `isabella-api` containers.
 
-8.  **Stop all running containers:**
+    **Stop all running containers:**
     ```bash
     make docker-stop
     ```
 
-9.  **View container logs:**
+    **View container logs:**
     ```bash
     make docker-logs-api
     make docker-logs-exporter
     ```
 
-10. **Clean up:**
+    **Clean up:**
     ```bash
     make clean
     ```
     This command stops and removes containers, images, executables, network, and volume.
 
-11. **Clean cache volume only:**
+    **Clean cache volume only:**
     ```bash
     make clean-cache
     ```
 
-12. **Restart all containers:**
+    **Restart all containers:**
     ```bash
     make restart
     ```
 
-13. **Check status of Docker components:**
+    **Check status of Docker components:**
     ```bash
     make status
     ```
