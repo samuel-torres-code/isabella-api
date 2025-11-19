@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: isabella-api
+    ports:
+      - "8080:8080"
+    volumes:
+      - isabella-cache:/app/cache
+    networks:
+      - isabella-network
+    restart: unless-stopped
+    depends_on:
+      - exporter
+
+  exporter:
+    build:
+      context: .
+      dockerfile: Dockerfile.exporter
+    container_name: isabella-exporter
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - isabella-cache:/app/cache
+    networks:
+      - isabella-network
+    restart: unless-stopped
+
+volumes:
+  isabella-cache:
+    driver: local
+
+networks:
+  isabella-network:
+    driver: bridge
+

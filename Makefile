@@ -1,4 +1,4 @@
-.PHONY: all build docker-build-api docker-build-exporter docker-run-api docker-run-exporter docker-stop clean
+.PHONY: all build docker-build-api docker-build-exporter docker-run-api docker-run-exporter docker-stop clean compose-up compose-down compose-build compose-up-build compose-logs compose-logs-api compose-logs-exporter compose-restart compose-ps compose-clean
 
 APP_NAME := isabella
 EXPORTER_NAME := docker-exporter
@@ -124,3 +124,41 @@ status:
 	@echo ""
 	@echo "=== Volume Status ==="
 	@docker volume inspect $(CACHE_VOLUME) 2>/dev/null || echo "Volume not created"
+
+# Docker Compose commands (recommended)
+compose-up:
+	@echo "Starting services with Docker Compose..."
+	docker-compose up -d
+	@echo "Services started successfully!"
+	@echo "API: http://localhost:8080"
+
+compose-down:
+	@echo "Stopping services with Docker Compose..."
+	docker-compose down
+
+compose-build:
+	@echo "Building images with Docker Compose..."
+	docker-compose build
+
+compose-up-build: compose-build compose-up
+	@echo "Built and started services!"
+
+compose-logs:
+	docker-compose logs -f
+
+compose-logs-api:
+	docker-compose logs -f api
+
+compose-logs-exporter:
+	docker-compose logs -f exporter
+
+compose-restart:
+	docker-compose restart
+
+compose-ps:
+	docker-compose ps
+
+compose-clean: compose-down
+	@echo "Cleaning up Docker Compose resources..."
+	docker-compose down -v
+	rm -f docker_data.json
