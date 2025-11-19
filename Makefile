@@ -1,11 +1,13 @@
 .PHONY: all build docker-build-api docker-build-exporter docker-run-api docker-run-exporter docker-stop clean
 
-APP_NAME := go-isabella-api
+APP_NAME := isabella
 EXPORTER_NAME := docker-exporter
 
+DOCKER_USERNAME := racecar246
+
 # Image names
-API_IMAGE_NAME := $(APP_NAME)-api
-EXPORTER_IMAGE_NAME := $(APP_NAME)-exporter
+API_IMAGE_NAME := $(DOCKER_USERNAME)/$(APP_NAME)-api
+EXPORTER_IMAGE_NAME := $(DOCKER_USERNAME)/$(APP_NAME)-exporter
 
 # Container names (different from image names)
 API_CONTAINER_NAME := isabella-api
@@ -34,6 +36,25 @@ docker-build-api:
 docker-build-exporter:
 	@echo "Building Docker image for Exporter..."
 	docker build -f Dockerfile.exporter -t $(EXPORTER_IMAGE_NAME) .
+
+docker-tag-api:
+	@echo "Tagging API Docker image..."
+	docker tag $(API_IMAGE_NAME) $(API_IMAGE_NAME)
+
+docker-tag-exporter:
+	@echo "Tagging Exporter Docker image..."
+	docker tag $(EXPORTER_IMAGE_NAME) $(EXPORTER_IMAGE_NAME)
+
+docker-push-api:
+	@echo "Pushing API Docker image to Docker Hub..."
+	docker push $(API_IMAGE_NAME)
+
+docker-push-exporter:
+	@echo "Pushing Exporter Docker image to Docker Hub..."
+	docker push $(EXPORTER_IMAGE_NAME)
+
+docker-push-all: docker-push-api docker-push-exporter
+	@echo "All Docker images pushed to Docker Hub."
 
 # Create shared network if it doesn't exist
 docker-network:
